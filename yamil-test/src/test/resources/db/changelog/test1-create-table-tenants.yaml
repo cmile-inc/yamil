@@ -1,0 +1,70 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: Mamtha K
+      changes:
+        - createTable:
+            tableName: tenants
+            columns:
+              - column:
+                  name: key
+                  type: uuid
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: tenant_id
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+                    uniqueKey: true
+              - column:
+                  name: description
+                  type: varchar(255)
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(255)
+              - column:
+                  name: created_by
+                  type: varchar(255)
+              - column:
+                  name: updated_by
+                  type: varchar(255)
+              - column:
+                  name: created_ts
+                  type: timestamp
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_ts
+                  type: timestamp
+                  defaultValueComputed: now()
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            tableName: tenants
+            columnNames:
+              - tenant_id
+            constraintName: uk_tenant_id
+  #        - addCheckConstraint:
+  #            tableName: tenants
+  #            columnNames: [ status ]
+  #            constraintName: tenants_status_check
+  #            sql: "status IN ('ACTIVE', 'INACTIVE')"
+
+  - changeSet:
+      id: Create Index - tenants id
+      author: Mamtha K
+      changes:
+        - createIndex:
+            indexName: IDX_tenant_id
+            tableName: tenants
+            columns:
+              - column:
+                  name: tenant_id

@@ -1,0 +1,29 @@
+logging:
+  level:
+    root: INFO
+    com:
+      cmile: INFO
+spring:
+  application:
+    name: service-testutil
+  cloud:
+    gcp:
+      pubsub:
+        project-id: gcp-testutil
+        credentials:
+          location: file:testutil/test-credentials.json
+      project:
+        projectId: gcp-testutil
+        credentials:
+          location: file:testutil/test-credentials.json
+gcp:
+  service:
+    account:
+      key:
+        file:
+          path: /Users/npentapalli/myData/work/cmile/projects/gcp-key.json
+    project: gcp-testutil
+  metadata:
+    internal:
+      url: http://localhost:8080
+

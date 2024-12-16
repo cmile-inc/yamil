@@ -1,0 +1,6 @@
+stackdriver:
+  step: 1m
+  connectTimeout: 5s
+  readTimeout: 5s
+  batchSize: 10
+  numThreads: 2

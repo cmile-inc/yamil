@@ -1,0 +1,16 @@
+logging:
+  level:
+    root: WARN
+    com:
+      cmile: DEBUG
+spring:
+  application:
+    name: global-space-service-util-test
+  domain: test
+gcp:
+  service:
+    account:
+      key:
+        file:
+          path: src/test/resources/test-credentials.json
+    project: test-cmile-project

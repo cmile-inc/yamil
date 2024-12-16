@@ -1,0 +1,7 @@
+
+gcp:
+  service:
+    account:
+      key:
+        file:
+          path: ./test-credentials.json

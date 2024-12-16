@@ -1,0 +1,54 @@
+name: Build Main Branch and Publish Maven Artifact
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout Branch
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Import GPG key
+        run: |
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
+          echo "default-key $(gpg --list-keys --with-colons | grep pub | head -1 | cut -d: -f5)" >> ~/.gnupg/gpg.conf
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+
+      - name: Set up secrets
+        run: |
+          echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_FILE }}" | base64 --decode > ./test.json
+        working-directory: ./cert
+          
+      - name: Configure Maven settings
+        run: |
+          mkdir -p ~/.m2
+          echo "<settings><servers><server><id>central</id><username>${{ secrets.SONATYPE_USER }}</username><password>${{ secrets.SONATYPE_PASSWORD}}</password></server></servers><profiles><profile><id>signing</id><properties><gpg.executable>gpg</gpg.executable><gpg.passphrase>${{ secrets.GPG_PASSPHRASE }}</gpg.passphrase></properties></profile></profiles></settings>" > ~/.m2/settings.xml
+
+      - name: Build with Maven
+        run: |
+          mvn versions:set -DnewVersion=1.0.${{ github.run_number }}
+          mvn -B clean install --file pom.xml -Psigning -Dgpg.keyname=DE33EA173AED823B7D0AB0750E0DBDC3E926C81F -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }}
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ../cert/test.json
+          PROJECT_ID: test-cmile-project
+
+      - name: Publish Versioned Package
+        run: |
+          mvn -B deploy -DskipTests -Psigning -Dgpg.keyname=DE33EA173AED823B7D0AB0750E0DBDC3E926C81F -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }}
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ../cert/test.json
+          PROJECT_ID: test-cmile-project

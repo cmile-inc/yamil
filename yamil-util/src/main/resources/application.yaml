@@ -1,0 +1,29 @@
+logging:
+  level:
+    root: WARN
+    com:
+      cmile: DEBUG
+meter:
+  registry:
+    stackdriver:
+      enabled: true
+    logging:
+      enabled: false
+gcp:
+  service:
+    project:
+      id: cmile-control
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    datasource:
+      hikari:
+        connectionTimeout: 100000
+        idleTimeout: 60000
+        maxLifetime: 180000
